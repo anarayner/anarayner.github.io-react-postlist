@@ -9,7 +9,7 @@ const Post = (props) => {
                 <div className='post__content__desc'>{props.post.body}</div>
             </div>
             <div className='post__btn'>
-                <button className='btn'>Delete</button>
+                <button onClick={()=> props.remove(props.post)} className='btn'>Delete</button>
             </div>
             
         </div>
