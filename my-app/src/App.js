@@ -2,8 +2,8 @@ import React, { useState} from 'react';
 import './styles/App.css'
 import PostList from './components/PostList';
 import PostForm from './components/PostForm';
+import PostFilter from './components/PostFilter';
 import Select from './components/UI/select/Select';
-import MyInput from './components/UI/input/MyInput';
 
 function App() {
 
@@ -11,7 +11,7 @@ function App() {
       {id: 1, title: 'Javascript', body:'Javascript is programming language'},
       {id: 2, title: 'Python', body:'Angular is not programming language'},
       {id: 3, title: 'Java', body:'Java is programming language'},
-      {id: 4, title: 'C++', body:'C++ is programming language'}
+      {id: 4, title: 'AC++', body:'AC++ is programming language'}
       ])
 
 
@@ -23,27 +23,25 @@ function App() {
        setPosts(posts.filter(p => p.id !==post.id))
     }
 
-    const [selectedSort, setSelectedSort] = useState('')
-    const [searchQuery, setSearchQuery] = useState('')
+    // const [selectedSort, setSelectedSort] = useState('') -- .sort
+    // const [searchQuery, setSearchQuery] = useState('') -- .filter
 
-    const sortedPosts =(selectedSort) =>{
-      if(selectedSort){
-          console.log('run')
-          setSelectedSort(selectedSort)
-          return setPosts([...posts].sort((a,b)=>a[selectedSort].localeCompare(b[selectedSort])))
-      }
-      return posts
+    const [filter, setFilter] = useState({sort:'', query:''})
+    const [sortPosts, setSortPost] = useState('')
+
+    const sortedPosts =(sort) =>{
+        console.log(sort)
+        setSortPost(sort)
+        setPosts([...posts].sort((a,b)=>a[sort].localeCompare(b[sort])))
+
     }
 
-
-
-    const filteredPosts = posts.filter((post) => selectedSort
+    const filteredPosts = posts.filter((post) =>
+        filter.sort
         ?
-        post[selectedSort].toLowerCase().includes(searchQuery)
+        post[filter.sort].toLowerCase().includes(filter.query)
         :
-        post.title.toLowerCase().includes(searchQuery))
-
-
+        post.title.toLowerCase().includes(filter.query))
 
   return (
     <div className="App">
@@ -51,13 +49,10 @@ function App() {
         <PostForm create={createPost}/>
         <hr style={{marginTop: '20px'}}/>
 
-        <MyInput
-            value={searchQuery}
-            onChange={e=> setSearchQuery(e.target.value)}
-            placeholder={'Search'}/>
+        <PostFilter filter={filter} setFilter={setFilter}/>
 
         <Select
-            value={selectedSort}
+            value={sortPosts}
             onChange={sortedPosts}
             defaultValue='Sort by'
             options={[
@@ -65,7 +60,6 @@ function App() {
                 {value: 'body', name: 'Description'}
             ]}
         />
-
 
         {filteredPosts.length !==0
             ?
