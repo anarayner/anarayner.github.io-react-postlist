@@ -18,7 +18,6 @@ function App() {
     // const [body, setBody] = useState('')
     // creating one object instead (look PostForm)
 
-
     const createPost =(newPost)=>{
         setPosts([...posts, newPost])
     }
@@ -28,10 +27,23 @@ function App() {
     }
 
     const [selectedSort, setSelectedSort] = useState('')
-    const sortPost = (sortSelection) =>{
-      setSelectedSort(sortSelection)
-      setPosts([...posts].sort((a,b)=>a[sortSelection].localeCompare(b[sortSelection])))
+
+    function getSortedPosts(selectedSort){
+        console.log('RUN')
+      if(selectedSort){
+          console.log(selectedSort)
+          setSelectedSort(selectedSort)
+          return setPosts([...posts].sort((a,b)=>a[selectedSort].localeCompare(b[selectedSort])))
+      }
+      return posts
     }
+
+
+    const [searchData, setSearchData] = useState('')
+    // console.log(searchData)
+
+    const filteredPosts = posts.filter(post => post.title.toLowerCase().includes(searchData))
+
 
 
   return (
@@ -41,18 +53,21 @@ function App() {
         <hr style={{marginTop: '20px'}}/>
         <Select
             value={selectedSort}
-            onChange={sortPost}
+            onChange={getSortedPosts}
             defaultValue='Sort by'
             options={[
                 {value: 'title', name:'Title'},
                 {value: 'body', name: 'Description'}
             ]}
         />
-        <MyInput placeholder={'Search'}/>
+        <MyInput
+            value={searchData}
+            onChange={e=> setSearchData(e.target.value)}
+            placeholder={'Search'}/>
 
         {posts.length !==0
             ?
-            <PostList remove={removePost} posts={posts} title={'Programming languages' }/>
+            <PostList remove={removePost} posts={filteredPosts} title={'Programming languages' }/>
             :
             <h1 style={{textAlign:'center'}}>Post not found, sorry!</h1>
         }
