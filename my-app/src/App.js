@@ -14,9 +14,6 @@ function App() {
       {id: 4, title: 'C++', body:'C++ is programming language'}
       ])
 
-    // const [title, setTitle] = useState('')
-    // const [body, setBody] = useState('')
-    // creating one object instead (look PostForm)
 
     const createPost =(newPost)=>{
         setPosts([...posts, newPost])
@@ -27,11 +24,11 @@ function App() {
     }
 
     const [selectedSort, setSelectedSort] = useState('')
+    const [searchQuery, setSearchQuery] = useState('')
 
-    function getSortedPosts(selectedSort){
-        console.log('RUN')
+    const sortedPosts =(selectedSort) =>{
       if(selectedSort){
-          console.log(selectedSort)
+          console.log('run')
           setSelectedSort(selectedSort)
           return setPosts([...posts].sort((a,b)=>a[selectedSort].localeCompare(b[selectedSort])))
       }
@@ -39,10 +36,12 @@ function App() {
     }
 
 
-    const [searchData, setSearchData] = useState('')
-    // console.log(searchData)
 
-    const filteredPosts = posts.filter(post => post.title.toLowerCase().includes(searchData))
+    const filteredPosts = posts.filter((post) => selectedSort
+        ?
+        post[selectedSort].toLowerCase().includes(searchQuery)
+        :
+        post.title.toLowerCase().includes(searchQuery))
 
 
 
@@ -51,25 +50,28 @@ function App() {
         {/*передаем в новый агрумент фкнкцию обратного вызова*/}
         <PostForm create={createPost}/>
         <hr style={{marginTop: '20px'}}/>
+
+        <MyInput
+            value={searchQuery}
+            onChange={e=> setSearchQuery(e.target.value)}
+            placeholder={'Search'}/>
+
         <Select
             value={selectedSort}
-            onChange={getSortedPosts}
+            onChange={sortedPosts}
             defaultValue='Sort by'
             options={[
                 {value: 'title', name:'Title'},
                 {value: 'body', name: 'Description'}
             ]}
         />
-        <MyInput
-            value={searchData}
-            onChange={e=> setSearchData(e.target.value)}
-            placeholder={'Search'}/>
 
-        {posts.length !==0
+
+        {filteredPosts.length !==0
             ?
             <PostList remove={removePost} posts={filteredPosts} title={'Programming languages' }/>
             :
-            <h1 style={{textAlign:'center'}}>Post not found, sorry!</h1>
+            <h1 style={{textAlign:'center', marginTop:'100px'}}>Post not found, sorry!</h1>
         }
 
     </div>
