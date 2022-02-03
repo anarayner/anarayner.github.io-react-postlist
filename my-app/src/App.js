@@ -4,6 +4,9 @@ import PostList from './components/PostList';
 import PostForm from './components/PostForm';
 import PostFilter from './components/PostFilter';
 import Select from './components/UI/select/Select';
+import Modal from './components/UI/modal/Modal';
+import MyButton from './components/UI/button/MyButton';
+import {usePostsFilter} from './hooks/usePostsFilter';
 
 function App() {
 
@@ -17,36 +20,35 @@ function App() {
 
     const createPost =(newPost)=>{
         setPosts([...posts, newPost])
+        setModalVisible(false)
     }
 
     const removePost = (post) =>{
        setPosts(posts.filter(p => p.id !==post.id))
     }
 
-    // const [selectedSort, setSelectedSort] = useState('') -- .sort
-    // const [searchQuery, setSearchQuery] = useState('') -- .filter
 
-    const [filter, setFilter] = useState({sort:'', query:''})
     const [sortPosts, setSortPost] = useState('')
 
     const sortedPosts =(sort) =>{
-        console.log(sort)
         setSortPost(sort)
         setPosts([...posts].sort((a,b)=>a[sort].localeCompare(b[sort])))
-
     }
 
-    const filteredPosts = posts.filter((post) =>
-        filter.sort
-        ?
-        post[filter.sort].toLowerCase().includes(filter.query)
-        :
-        post.title.toLowerCase().includes(filter.query))
+    const [filter, setFilter] = useState({sort:'', query:''})
+    const filteredPosts = usePostsFilter(posts, filter.sort, filter.query)
 
-  return (
+    const [modalVisible, setModalVisible] = useState(false)
+
+    return (
     <div className="App">
+        <MyButton onClick={()=> setModalVisible(true)}>Add post</MyButton>
+
+        <Modal modalVisible={modalVisible} setModalVisible={setModalVisible}>
+            <PostForm create={createPost}/>
+        </Modal>
+
         {/*передаем в новый агрумент фкнкцию обратного вызова*/}
-        <PostForm create={createPost}/>
         <hr style={{marginTop: '20px'}}/>
 
         <PostFilter filter={filter} setFilter={setFilter}/>
