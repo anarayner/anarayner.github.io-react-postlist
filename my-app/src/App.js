@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './styles/App.css'
 import PostList from './components/PostList';
 import PostForm from './components/PostForm';
@@ -7,15 +7,33 @@ import Select from './components/UI/select/Select';
 import Modal from './components/UI/modal/Modal';
 import MyButton from './components/UI/button/MyButton';
 import {usePostsFilter} from './hooks/usePostsFilter';
+import PostService from './API/PostService';
+import Loader from './components/UI/loader/Loader';
+import {useFetching} from './hooks/useFetching';
 
 function App() {
 
-  const [posts, setPosts] = useState([
-      {id: 1, title: 'Javascript', body:'Javascript is programming language'},
-      {id: 2, title: 'Python', body:'Angular is not programming language'},
-      {id: 3, title: 'Java', body:'Java is programming language'},
-      {id: 4, title: 'AC++', body:'AC++ is programming language'}
-      ])
+  const [posts, setPosts] = useState([])
+
+
+    // /* Animation while posts is loading */
+    // const [isPostsLoading, setIsPostsLoading] = useState(true)
+    //
+    // /* Modal window to add new post */
+    // async function fetchPost(){
+    //     const posts = await PostService.getAll()
+    //     setPosts(posts)
+    //     setIsPostsLoading(false)
+    // }
+
+    const [fetchPost, isPostsLoading, postError] = useFetching(async () => {
+        const posts = await PostService.getAll ()
+        setPosts (posts)
+    })
+
+    useEffect(()=>{
+        fetchPost()
+    },[])
 
 
     const createPost =(newPost)=>{
@@ -27,18 +45,20 @@ function App() {
        setPosts(posts.filter(p => p.id !==post.id))
     }
 
+    /* Search posts */
+    const [filter, setFilter] = useState({sort:'', query:''})
+    const filteredPosts = usePostsFilter(posts, filter.sort, filter.query)
 
+    /* Sort posts */
     const [sortPosts, setSortPost] = useState('')
-
     const sortedPosts =(sort) =>{
         setSortPost(sort)
         setPosts([...posts].sort((a,b)=>a[sort].localeCompare(b[sort])))
     }
 
-    const [filter, setFilter] = useState({sort:'', query:''})
-    const filteredPosts = usePostsFilter(posts, filter.sort, filter.query)
-
+    /* Modal window to add new post */
     const [modalVisible, setModalVisible] = useState(false)
+
 
     return (
     <div className="App">
@@ -48,11 +68,8 @@ function App() {
             <PostForm create={createPost}/>
         </Modal>
 
-        {/*передаем в новый агрумент фкнкцию обратного вызова*/}
         <hr style={{marginTop: '20px'}}/>
-
         <PostFilter filter={filter} setFilter={setFilter}/>
-
         <Select
             value={sortPosts}
             onChange={sortedPosts}
@@ -60,15 +77,20 @@ function App() {
             options={[
                 {value: 'title', name:'Title'},
                 {value: 'body', name: 'Description'}
-            ]}
-        />
+            ]} />
 
-        {filteredPosts.length !==0
+
+        {isPostsLoading
             ?
-            <PostList remove={removePost} posts={filteredPosts} title={'Programming languages' }/>
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+                <Loader />
+            </div>
+
             :
-            <h1 style={{textAlign:'center', marginTop:'100px'}}>Post not found, sorry!</h1>
+            <PostList remove={removePost} posts={filteredPosts} postError={postError} title={'Programming languages' }/>
+
         }
+
 
     </div>
   );
