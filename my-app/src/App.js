@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import './styles/App.css'
 import PostList from './components/PostList';
 import PostForm from './components/PostForm';
@@ -10,26 +10,27 @@ import {usePostsFilter} from './hooks/usePostsFilter';
 import PostService from './API/PostService';
 import Loader from './components/UI/loader/Loader';
 import {useFetching} from './hooks/useFetching';
+import {getTotalPages} from './utils/pages';
+import {usePagination} from './hooks/usePagination';
 
 function App() {
 
   const [posts, setPosts] = useState([])
 
 
-    // /* Animation while posts is loading */
-    // const [isPostsLoading, setIsPostsLoading] = useState(true)
-    //
-    // /* Modal window to add new post */
-    // async function fetchPost(){
-    //     const posts = await PostService.getAll()
-    //     setPosts(posts)
-    //     setIsPostsLoading(false)
-    // }
+    const [totalPages, setTotalPages] = useState(0)
+    const limit = 10;
+    const [page, setPage] = useState(1)
 
     const [fetchPost, isPostsLoading, postError] = useFetching(async () => {
-        const posts = await PostService.getAll ()
-        setPosts (posts)
+        const response = await PostService.getAll (limit, page)
+        setPosts (response.data)
+        const totalCount = (response.headers['x-total-count'])
+        setTotalPages(getTotalPages(totalCount, limit))
     })
+
+   const paginationRange = usePagination(totalPages)
+
 
     useEffect(()=>{
         fetchPost()
@@ -90,7 +91,15 @@ function App() {
             <PostList remove={removePost} posts={filteredPosts} postError={postError} title={'Programming languages' }/>
 
         }
-
+        <div className='page_container'>
+        {paginationRange.map(p=>
+            <button  
+                key={p+1}
+                onClick={()=> setPage(p)}
+                className={page === p ? 'page page_current': 'page'} >
+                {p}
+            </button>)}
+        </div>
 
     </div>
   );
