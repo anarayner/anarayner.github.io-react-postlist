@@ -1,6 +1,6 @@
 import React from 'react';
 import MyInput from './UI/input/MyInput';
-import Select from './UI/select/Select';
+import MySelect from './UI/select/MySelect';
 
 const PostFilter = ({filter, setFilter}) => {
     return (
@@ -10,7 +10,7 @@ const PostFilter = ({filter, setFilter}) => {
                 onChange={e=> setFilter({...filter, query: e.target.value})}
                 placeholder={'Search'}/>
 
-            <Select
+            <MySelect
                 value={filter.sort}
                 onChange={selectedSort=>setFilter({...filter, sort: selectedSort})}
                 defaultValue='Search by'

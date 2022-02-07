@@ -1,7 +1,7 @@
 import React from 'react';
 import classes from './Select.module.css'
 
-const Select = ({defaultValue, options, value, onChange}) => {
+const MySelect = ({defaultValue, options, value, onChange}) => {
     return (
         <select
             className={classes.select}
@@ -19,4 +19,4 @@ const Select = ({defaultValue, options, value, onChange}) => {
     );
 };
 
-export default Select;
+export default MySelect;

@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Modal.module.css'
 
-const Modal = ({children, modalVisible, setModalVisible}) => {
+const MyModal = ({children, modalVisible, setModalVisible}) => {
     const rootClasses = [styles.Modal]
 
     if (modalVisible === true ){
@@ -18,4 +18,4 @@ const Modal = ({children, modalVisible, setModalVisible}) => {
     );
 };
 
-export default Modal;
+export default MyModal;
