@@ -3,7 +3,6 @@ import '../styles/App.css'
 import {useFetching} from '../hooks/useFetching';
 import PostService from '../API/PostService';
 import {getTotalPages} from '../utils/pages';
-import {usePagination} from '../hooks/usePagination';
 import {usePostsFilter} from '../hooks/usePostsFilter';
 import MyButton from '../components/UI/button/MyButton';
 import PostForm from '../components/PostForm';
@@ -29,7 +28,6 @@ function PostsPage() {
         setTotalPages(getTotalPages(totalCount, limit))
     })
 
-    const paginationRange = usePagination(totalPages)
     const changePage = (page) =>{
         setPage(page)
 
@@ -68,14 +66,21 @@ function PostsPage() {
 
     return (
         <div className="App">
-            <MyButton onClick={()=> setModalVisible(true)}>Add post</MyButton>
+            <MyButton 
+                style={{marginTop:'20px'}}
+                onClick={()=> setModalVisible(true)}>
+                Add post
+            </MyButton>
 
-            <MyModal modalVisible={modalVisible} setModalVisible={setModalVisible}>
+            <MyModal
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}>
                 <PostForm create={createPost}/>
             </MyModal>
 
-            <hr style={{marginTop: '20px'}}/>
-            <PostFilter filter={filter} setFilter={setFilter}/>
+            <PostFilter
+                filter={filter}
+                setFilter={setFilter}/>
             <MySelect
                 value={sortPosts}
                 onChange={sortedPosts}

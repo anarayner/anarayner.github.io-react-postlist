@@ -8,6 +8,7 @@ const Postitem = () => {
                 <div className='post__content__desc'>Javascript is programming language</div>
             </div>
             <div className='post__btn'>
+                <button className='btn'>Open</button>
                 <button className='btn'>Delete</button>
             </div>
             

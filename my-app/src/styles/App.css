@@ -41,6 +41,9 @@
     margin-top: 15px;
     font-size: 16px;
 }
+.post__btn{
+    display:flex;
+}
 
 .btn{
     padding: 15px;
@@ -51,6 +54,7 @@
     font-size:20px;
     font-weight: 500;
     width: 150px;
+    margin-left: 15px;
 }
 
 .post-enter {
